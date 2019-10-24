@@ -1,0 +1,51 @@
+defmodule DockerStakeService.PollOptionRepo do
+  use DockerStakeService.Schema
+  import Ecto.Changeset
+  import Ecto.Query
+
+  alias DockerStakeService.PollRepo
+  alias DockerStakeService.Repo
+
+  @type poll_id :: String.t()
+  @type pole_option :: String.t()
+
+  @fields [:id, :poll_id, :content]
+  @required_fields [:poll_id, :content]
+
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
+  schema "poll_option" do
+    belongs_to(
+      :poll,
+      PollRepo,
+      references: :id,
+      type: Ecto.UUID,
+      foreign_key: :poll_id
+    )
+    field(:content, :string, null: false)
+    field(:lock_version, :integer, default: 1)
+    timestamps()
+  end
+
+  def changeset(%__MODULE__{} = user, params) do
+    user
+    |> cast(params, @fields)
+    |> validate_required(@required_fields)
+    |> unique_constraint(:public_address, name: :user_public_address_index)
+  end
+
+  @spec create_poll_options(poll_id, [pole_option]) :: [Ecto.Changeset]
+  def create_poll_options(poll_id, pole_options) do
+    pole_options
+    |> Enum.map(fn option -> prepare_entry(option, poll_id) end)
+  end
+
+  defp prepare_entry(content, poll_id) do
+    %{
+      id: Ecto.UUID.generate(),
+      poll_id: poll_id,
+      content: content,
+      inserted_at: NaiveDateTime.utc_now(),
+      updated_at: NaiveDateTime.utc_now()
+    }
+  end
+end

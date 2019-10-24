@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  postgrescont:
+    container_name: postgrescont
+    restart: always
+    image: postgres:10
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=docker_stake_service_prod
+    volumes:
+    - stake-db:/var/lib/postgresql/data
+    ports:
+    - 5433:5432
+    networks:
+      stakepollnet:
+        ipv4_address: 172.12.0.101
+  stakeapp:
+    container_name: stakeapp
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+    - SECRET_KEY_BASE=I6RPdPb+FXA/5FGw90x9tJ75nAM9KqdkWakmQ+QY9q4axnYOGcu5aCwvmrAP+gpu
+    - COOL_TEXT=reallycools
+    - APP_PORT=4000
+    - JWT_SECRET=thisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethaha
+    ports:
+    - 4000:4000
+    networks:
+      stakepollnet:
+        ipv4_address: 172.12.0.102
+
+volumes:
+  stake-db:
+    name: stake-db
+
+networks:
+  stakepollnet:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.12.0.0/24
