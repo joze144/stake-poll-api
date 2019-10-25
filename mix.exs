@@ -48,6 +48,7 @@ defmodule DockerStakeService.MixProject do
       {:scrivener_ecto, "~> 2.0"},
       {:json_web_token, "~> 0.2"},
       {:httpoison, "~> 1.0", override: true},
+      {:poison, "~> 3.1"},
     ]
   end
 
