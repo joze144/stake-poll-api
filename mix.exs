@@ -46,6 +46,7 @@ defmodule DockerStakeService.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:scrivener_ecto, "~> 2.0"},
       {:json_web_token, "~> 0.2"},
+      {:poison, "~> 4.0"},
     ]
   end
 
