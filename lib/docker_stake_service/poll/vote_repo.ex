@@ -54,6 +54,16 @@ defmodule DockerStakeService.VoteRepo do
     |> Repo.all()
   end
 
+  def get_for_poll_and_user(_, nil), do: nil
+
+  def get_for_poll_and_user(poll_id, user_id) do
+    from(v in __MODULE__,
+      where: v.poll_id == ^poll_id and v.user_id == ^user_id,
+      select: v.poll_option_id
+    )
+    |> Repo.one()
+  end
+
   def insert_vote(user_id, poll_id, poll_option_id, weight) do
     changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id, weight: weight})
     |> Repo.insert(on_conflict: :nothing)

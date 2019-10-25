@@ -36,12 +36,12 @@ defmodule DockerStakeService.PollOptionRepo do
   @spec create_poll_options(poll_id, [pole_option]) :: [Ecto.Changeset]
   def create_poll_options(poll_id, pole_options) do
     pole_options
-    |> Enum.map(fn option -> prepare_entry(option, poll_id) end)
+    |> Enum.map(fn %{"id" => option_id, "content" => option} -> prepare_entry(option_id, option, poll_id) end)
   end
 
-  defp prepare_entry(content, poll_id) do
+  defp prepare_entry(option_id, content, poll_id) do
     %{
-      id: Ecto.UUID.generate(),
+      id: option_id,
       poll_id: poll_id,
       content: content,
       inserted_at: NaiveDateTime.utc_now(),

@@ -25,14 +25,14 @@ defmodule DockerStakeService.Account do
         exp: :os.system_time(:second) + 3600 * 360 * 24
       },
       %{
-        key: Application.get_env(:stake_poll_api, :jwt_secret)
+        key: Application.get_env(:docker_stake_service, :jwt_secret)
       }
     )
   end
 
   def verify_jwt(jwt) do
     jwt
-    |> JsonWebToken.verify(%{key: Application.get_env(:stake_poll_api, :jwt_secret)})
+    |> JsonWebToken.verify(%{key: Application.get_env(:docker_stake_service, :jwt_secret)})
     |> case do
          {:ok, claims} ->
            %{exp: exp} = claims

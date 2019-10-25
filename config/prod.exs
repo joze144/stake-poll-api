@@ -21,6 +21,8 @@ config :docker_stake_service, DockerStakeService.Repo,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :docker_stake_service, :jwt_secret, "thisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccret"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

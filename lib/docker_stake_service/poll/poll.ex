@@ -5,11 +5,11 @@ defmodule DockerStakeService.Poll do
 
   require Logger
 
-  def create_poll(poll_id, title, options, token_id)
+  def create_poll(poll_id, title, options, token_id, user_id)
       when is_list(options) and options != [] and title != nil and title != "" do
     with nil <- PollRepo.get_poll_by_id(poll_id),
          {:ok, %{poll_insert: _}} <- PollRepo.create_poll_transaction(poll_id, title, options, token_id) do
-      {:ok, PollRepo.get_poll_by_id(poll_id) |> calculate_votes()}
+      {:ok, PollRepo.get_poll_by_id(poll_id) |> calculate_votes(), VoteRepo.get_for_poll_and_user(poll_id, user_id)}
     else
       %{} = entry ->
         {:ok, entry}
