@@ -43,9 +43,11 @@ defmodule DockerStakeService.MixProject do
       {:gettext, "~> 0.11"},
       {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.0"},
+      {:cowboy, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:scrivener_ecto, "~> 2.0"},
       {:json_web_token, "~> 0.2"},
+      {:httpoison, "~> 1.0", override: true},
     ]
   end
 
