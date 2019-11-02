@@ -45,7 +45,14 @@ defmodule DockerStakeService.PollRepo do
     |> unique_constraint(:public_address, name: :user_public_address_index)
   end
 
-  @spec get_poll_by_id(poll_id) :: %__MODULE__{} | nil
+  @spec get_by_id(poll_id) :: %__MODULE__{} | nil
+  def get_by_id(poll_id) do
+    __MODULE__
+    |> where([p], p.id == ^poll_id)
+    |> Repo.one()
+  end
+
+  @spec get_poll_by_id(poll_id) :: Map.t() | nil
   def get_poll_by_id(poll_id) do
     from(p in __MODULE__,
       join: t in TokenRepo,

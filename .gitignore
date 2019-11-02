@@ -37,4 +37,4 @@ node_modules
 /priv/gettext/en/*
 /priv/gettext/zh_CN/*
 doc/*
-
+docker_stake_service.iml

@@ -64,8 +64,14 @@ defmodule DockerStakeService.VoteRepo do
     |> Repo.one()
   end
 
+  # TODO: think if user is able to change his vote?
   def insert_vote(user_id, poll_id, poll_option_id, weight) do
+    on_conflict = [
+      set: [
+        poll_option_id: poll_option_id
+      ]
+    ]
     changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id, weight: weight})
-    |> Repo.insert(on_conflict: :nothing)
+    |> Repo.insert(on_conflict: on_conflict, conflict_target: [:user_id, :poll_id])
   end
 end

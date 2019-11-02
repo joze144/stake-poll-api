@@ -14,7 +14,6 @@ defmodule DockerStakeServiceWeb.UserController do
 
   def verify_signature(conn, %{"public_address" => public_address, "message" => _message, "signature" => _signature}) do
     with {:ok, user} <- Account.register(public_address) do
-      IO.inspect(user)
       jwt = Account.generate_jwt(user)
       conn |> put_status(:ok) |> render("user_with_jwt.json", user: user, jwt: jwt)
     end

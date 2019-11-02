@@ -21,17 +21,11 @@ defmodule DockerStakeServiceWeb.Router do
     post("/verify-signature", UserController, :verify_signature)
   end
 
-  scope "/logged-in", DockerStakeServiceWeb do
-    pipe_through([:api, :require_jwt])
-
-    get("/is-it", CheckController, :check)
-  end
-
   scope "/poll", DockerStakeServiceWeb do
     pipe_through([:api, :optional_jwt])
 
     post("/create", PollController, :create_poll)
-    post("/get", PollController, :get_poll)
+    post("/fetch", PollController, :get_poll)
   end
 
   scope "/poll", DockerStakeServiceWeb do
