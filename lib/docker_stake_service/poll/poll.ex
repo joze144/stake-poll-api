@@ -64,9 +64,9 @@ defmodule DockerStakeService.Poll do
       votes
       |> Enum.map(fn %{vote_weight: weight} = data ->
         if weight == 0 do
-          Map.merge(data, %{vote_percentage: "0.00"})
+          Map.merge(data, %{vote_percentage: "0.0"})
         else
-          Map.merge(data, %{vote_percentage: :erlang.float_to_binary((weight * 100) / votes_sum, [decimals: 3])})
+          Map.merge(data, %{vote_percentage: :erlang.float_to_binary((weight * 100) / votes_sum, [decimals: 1])})
         end
       end)
 

@@ -7,8 +7,8 @@ defmodule DockerStakeServiceWeb.PollRoom do
 
   require Logger
 
-  def join("pool:" <> pool_id, _, socket) do
-    with %PollRepo{} <- PollRepo.get_poll_by_id(pool_id) do
+  def join("poll:" <> pool_id, _, socket) do
+    with %PollRepo{} <- PollRepo.get_by_id(pool_id) do
       {:ok, socket}
     else
       _ ->
@@ -17,7 +17,11 @@ defmodule DockerStakeServiceWeb.PollRoom do
   end
 
   def broadcast_pool(poll_id, %{} = poll_updates) do
-    Endpoint.broadcast!("poll:" <> poll_id, "poll_updates", poll_updates)
+    Endpoint.broadcast!(
+      "poll:" <> poll_id,
+      "poll_updates",
+      poll_updates |> Map.put(:message_type, "poll_update" <> poll_id)
+    )
   end
 
   def broadcast_pool(_, _), do: nil

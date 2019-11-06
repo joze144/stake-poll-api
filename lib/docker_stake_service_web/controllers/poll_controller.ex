@@ -18,7 +18,7 @@ defmodule DockerStakeServiceWeb.PollController do
 
   def get_poll(conn, %{"poll_id" => poll_id}) do
     user_id = get_user_id(conn.assigns.docker_stake_service_claims)
-    with %{} = poll <- Poll.get_poll(poll_id, user_id) |> IO.inspect() do
+    with %{} = poll <- Poll.get_poll(poll_id, user_id) do
       conn |> put_status(:ok) |> json(poll)
     else
       nil ->
@@ -28,7 +28,7 @@ defmodule DockerStakeServiceWeb.PollController do
 
   def vote_on_poll(conn, %{"poll_id" => poll_id, "option_id" => poll_option_id}) do
     user_id = get_user_id(conn.assigns.docker_stake_service_claims)
-    with {:ok, poll} <- Poll.vote_on_poll(user_id, poll_id, poll_option_id) |> IO.inspect() do
+    with {:ok, poll} <- Poll.vote_on_poll(user_id, poll_id, poll_option_id) do
       PollRoom.broadcast_pool(poll_id, Map.delete(poll, :user_vote))
       conn |> put_status(:ok) |> json(poll)
     else
