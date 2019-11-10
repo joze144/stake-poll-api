@@ -20,7 +20,7 @@ defmodule DockerStakeService.MixProject do
   def application do
     [
       mod: {DockerStakeService.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -49,6 +49,7 @@ defmodule DockerStakeService.MixProject do
       {:json_web_token, "~> 0.2"},
       {:httpoison, "~> 1.0", override: true},
       {:poison, "~> 3.1"},
+      {:uuid, "~> 1.1"},
     ]
   end
 

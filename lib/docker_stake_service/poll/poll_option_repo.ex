@@ -1,10 +1,8 @@
 defmodule DockerStakeService.PollOptionRepo do
   use DockerStakeService.Schema
   import Ecto.Changeset
-  import Ecto.Query
 
   alias DockerStakeService.PollRepo
-  alias DockerStakeService.Repo
 
   @type poll_id :: String.t()
   @type pole_option :: String.t()

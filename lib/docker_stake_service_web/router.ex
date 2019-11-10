@@ -32,5 +32,6 @@ defmodule DockerStakeServiceWeb.Router do
     pipe_through([:api, :require_jwt])
 
     post("/vote", PollController, :vote_on_poll)
+    post("/history", PollController, :get_poll_history)
   end
 end

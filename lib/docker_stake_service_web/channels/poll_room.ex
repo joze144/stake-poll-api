@@ -7,8 +7,9 @@ defmodule DockerStakeServiceWeb.PollRoom do
 
   require Logger
 
-  def join("poll:" <> pool_id, _, socket) do
-    with %PollRepo{} <- PollRepo.get_by_id(pool_id) do
+  def join("poll:" <> poll_id, _, socket) do
+    with {:ok, _} <- UUID.info(poll_id),
+         %PollRepo{} <- PollRepo.get_by_id(poll_id) do
       {:ok, socket}
     else
       _ ->

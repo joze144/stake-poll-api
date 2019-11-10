@@ -3,7 +3,8 @@ defmodule DockerStakeService.VoteRepo do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias DockerStakeService.{PollOptionRepo, PollRepo, Repo, UserRepo}
+  alias DockerStakeService.{PollHistoryRepo, PollOptionRepo, PollRepo, Repo, UserRepo}
+  alias Ecto.Multi
 
   @fields [:id, :user_id, :poll_id, :poll_option_id, :weight]
   @required_fields [:user_id, :poll_id, :poll_option_id, :weight]
@@ -66,12 +67,26 @@ defmodule DockerStakeService.VoteRepo do
 
   # TODO: think if user is able to change his vote?
   def insert_vote(user_id, poll_id, poll_option_id, weight) do
-    on_conflict = [
+    on_conflict_vote = [
       set: [
         poll_option_id: poll_option_id
       ]
     ]
-    changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id, weight: weight})
-    |> Repo.insert(on_conflict: on_conflict, conflict_target: [:user_id, :poll_id])
+    vote_entry =
+      changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id, weight: weight})
+
+    on_conflict_history = [
+      set: [
+        voted_option_id: poll_option_id
+      ]
+    ]
+    poll_history_entry =
+      %PollHistoryRepo{}
+      |> PollHistoryRepo.changeset(%{poll_id: poll_id, user_id: user_id, voted_option_id: poll_option_id})
+
+    Multi.new()
+    |> Multi.insert(:vote_insert, vote_entry, on_conflict: on_conflict_vote, conflict_target: [:user_id, :poll_id])
+    |> Multi.insert(:poll_history_insert, poll_history_entry, on_conflict: on_conflict_history, conflict_target: [:user_id, :poll_id])
+    |> Repo.transaction()
   end
 end

@@ -1,7 +1,7 @@
 defmodule DockerStakeService.Poll do
   @moduledoc false
 
-  alias DockerStakeService.{PollRepo, VoteRepo}
+  alias DockerStakeService.{PollHistoryRepo, PollRepo, VoteRepo}
 
   require Logger
 
@@ -11,6 +11,10 @@ defmodule DockerStakeService.Poll do
   @type user_id :: String.t()
   @type option_id :: String.t()
   @type token_id :: String.t()
+
+  def get_poll_history(user_id, page) do
+    PollHistoryRepo.get_by_user_id_paginated(user_id, page)
+  end
 
   @spec get_poll(poll_id, user_id) :: Map.t() | nil
   def get_poll(poll_id, user_id) do
@@ -40,7 +44,7 @@ defmodule DockerStakeService.Poll do
   def create_poll(poll_id, title, options, token_id, user_id)
       when is_list(options) and options != [] and title != nil and title != "" do
     with nil <- PollRepo.get_poll_by_id(poll_id),
-         {:ok, %{poll_insert: _}} <- PollRepo.create_poll_transaction(poll_id, title, options, token_id) do
+         {:ok, %{poll_insert: _}} <- PollRepo.create_poll_transaction(poll_id, title, options, token_id, user_id) do
       {:ok, PollRepo.get_poll_by_id(poll_id) |> calculate_votes(), VoteRepo.get_for_poll_and_user(poll_id, user_id)}
     else
       %{} = entry ->

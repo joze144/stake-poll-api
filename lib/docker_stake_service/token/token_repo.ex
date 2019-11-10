@@ -3,9 +3,6 @@ defmodule DockerStakeService.TokenRepo do
 
   use DockerStakeService.Schema
   import Ecto.Changeset
-  import Ecto.Query
-
-  alias DockerStakeService.Repo
 
   @fields [:id, :ticker, :name]
   @required_fields [:ticker, :name]

@@ -5,10 +5,11 @@ defmodule DockerStakeService.PollRepo do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias DockerStakeService.{PollOptionRepo, Repo, TokenRepo}
+  alias DockerStakeService.{PollOptionRepo, PollHistoryRepo,Repo, TokenRepo}
   alias Ecto.Multi
 
   @type poll_id :: String.t()
+  @type user_id :: String.t()
   @type title :: String.t()
   @type poll_option :: String.t()
   @type token_id :: String.t()
@@ -70,8 +71,8 @@ defmodule DockerStakeService.PollRepo do
     |> preload_poll_options()
   end
 
-  @spec create_poll_transaction(poll_id, title, [poll_option], token_id) :: {:ok, %__MODULE__{}} | {:error, String.t()}
-  def create_poll_transaction(poll_id, title, poll_options, token_id) do
+  @spec create_poll_transaction(poll_id, title, [poll_option], token_id, user_id) :: {:ok, %__MODULE__{}} | {:error, String.t()}
+  def create_poll_transaction(poll_id, title, poll_options, token_id, nil) do
     poll_entry =
       %__MODULE__{}
       |> changeset(%{id: poll_id, token_id: token_id, title: title})
@@ -81,6 +82,24 @@ defmodule DockerStakeService.PollRepo do
     Multi.new()
     |> Multi.insert(:poll_insert, poll_entry, on_conflict: :nothing)
     |> Multi.insert_all(:poll_options_insert, PollOptionRepo, options_entries, on_conflict: :nothing)
+    |> Repo.transaction()
+  end
+
+  def create_poll_transaction(poll_id, title, poll_options, token_id, user_id) do
+    poll_entry =
+      %__MODULE__{}
+      |> changeset(%{id: poll_id, token_id: token_id, title: title})
+
+    poll_history_entry =
+      %PollHistoryRepo{}
+      |> PollHistoryRepo.changeset(%{poll_id: poll_id, user_id: user_id})
+
+    options_entries = PollOptionRepo.create_poll_options(poll_id, poll_options)
+
+    Multi.new()
+    |> Multi.insert(:poll_insert, poll_entry, on_conflict: :nothing)
+    |> Multi.insert_all(:poll_options_insert, PollOptionRepo, options_entries, on_conflict: :nothing)
+    |> Multi.insert(:poll_history_insert, poll_history_entry, on_conflict: :nothing)
     |> Repo.transaction()
   end
 
