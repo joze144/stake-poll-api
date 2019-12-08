@@ -13,9 +13,10 @@ defmodule DockerStakeService.PollRepo do
   @type title :: String.t()
   @type poll_option :: String.t()
   @type token_id :: String.t()
+  @type url :: String.t()
 
-  @fields [:id, :token_id, :title]
-  @required_fields [:token_id, :title]
+  @fields [:id, :token_id, :title, :url]
+  @required_fields [:token_id, :title, :url]
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "poll" do
@@ -27,6 +28,7 @@ defmodule DockerStakeService.PollRepo do
       foreign_key: :token_id
     )
     field(:title, :string)
+    field(:url, :string)
     field(:lock_version, :integer, default: 1)
     timestamps()
 
@@ -62,20 +64,22 @@ defmodule DockerStakeService.PollRepo do
       select: %{
         poll_id: p.id,
         title: p.title,
+        url: p.url,
         token_id: t.id,
         ticker: t.ticker,
-        token_name: t.name
+        token_name: t.name,
+        timestamp: p.inserted_at
       }
     )
     |> Repo.one()
     |> preload_poll_options()
   end
 
-  @spec create_poll_transaction(poll_id, title, [poll_option], token_id, user_id) :: {:ok, %__MODULE__{}} | {:error, String.t()}
-  def create_poll_transaction(poll_id, title, poll_options, token_id, nil) do
+  @spec create_poll_transaction(poll_id, title, [poll_option], token_id, user_id, url) :: {:ok, %__MODULE__{}} | {:error, String.t()}
+  def create_poll_transaction(poll_id, title, poll_options, token_id, nil, url) do
     poll_entry =
       %__MODULE__{}
-      |> changeset(%{id: poll_id, token_id: token_id, title: title})
+      |> changeset(%{id: poll_id, token_id: token_id, title: title, url: url})
 
     options_entries = PollOptionRepo.create_poll_options(poll_id, poll_options)
 
@@ -85,10 +89,10 @@ defmodule DockerStakeService.PollRepo do
     |> Repo.transaction()
   end
 
-  def create_poll_transaction(poll_id, title, poll_options, token_id, user_id) do
+  def create_poll_transaction(poll_id, title, poll_options, token_id, user_id, url) do
     poll_entry =
       %__MODULE__{}
-      |> changeset(%{id: poll_id, token_id: token_id, title: title})
+      |> changeset(%{id: poll_id, token_id: token_id, title: title, url: url})
 
     poll_history_entry =
       %PollHistoryRepo{}

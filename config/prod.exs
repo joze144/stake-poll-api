@@ -10,9 +10,12 @@ config :docker_stake_service, DockerStakeService.Repo,
        pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :warn
 
 config :docker_stake_service, :jwt_secret, "thisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccret"
+
+config :docker_stake_service, :url_domain, "http://stakepoll.jozhe.com/"
+config :docker_stake_service, :enable_bitly, true
 
 # ## SSL Support
 #

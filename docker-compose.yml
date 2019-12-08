@@ -23,7 +23,6 @@ services:
       dockerfile: Dockerfile
     environment:
     - SECRET_KEY_BASE=I6RPdPb+FXA/5FGw90x9tJ75nAM9KqdkWakmQ+QY9q4axnYOGcu5aCwvmrAP+gpu
-    - COOL_TEXT=reallycools
     - APP_PORT=4000
     - JWT_SECRET=thisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethaha
     ports:

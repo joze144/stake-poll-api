@@ -8,7 +8,12 @@ defmodule DockerStakeServiceWeb.PollController do
 
   def create_poll(conn, %{"poll_id" => poll_id, "title" => title, "options" => options}) do
     user_id = get_user_id(conn.assigns.docker_stake_service_claims)
-    with {:ok, poll, user_vote} <- Poll.create_poll(poll_id, title, options, @eth_token_id, user_id) do
+    options = options |> Enum.map(&validate_option/1)
+    title = String.trim(title)
+    with true <- length(options) > 1,
+         true <- title != nil and title != "",
+         {:ok, _} <- UUID.info(poll_id),
+         {:ok, poll, user_vote} <- Poll.create_poll(poll_id, title, options, @eth_token_id, user_id) do
       conn |> put_status(:ok) |> render("show.json", poll: poll, user_vote: user_vote)
     else
       _ ->
@@ -49,4 +54,17 @@ defmodule DockerStakeServiceWeb.PollController do
   def get_user_id(%{userid: user_id}), do: user_id
 
   def get_user_id(_), do: nil
+
+  defp validate_option(%{"content" => c, "id" => id}) do
+    c = String.trim(c)
+    with {:ok, _} <- UUID.info(id),
+         true <- c != nil and c != "" do
+      %{"content" => c, "id" => id}
+    else
+      _ ->
+        nil
+    end
+  end
+
+  defp validate_option(_), do: nil
 end

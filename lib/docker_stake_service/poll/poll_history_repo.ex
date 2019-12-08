@@ -58,6 +58,7 @@ defmodule DockerStakeService.PollHistoryRepo do
       select: %{
         poll_id: ph.poll_id,
         title: p.title,
+        url: p.url,
         chosen_option_id: ph.voted_option_id,
         chosen_option_content: fragment("""
         CASE WHEN p2 IS NOT NULL THEN p2.content ELSE NULL END
