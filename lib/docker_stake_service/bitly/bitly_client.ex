@@ -6,7 +6,7 @@ defmodule DockerStakeService.BitlyClient do
 
   def shorten_url(poll_id) do
     body = %{
-      long_url: Application.get_env(:docker_stake_service, :url_domain) <> poll_id
+      long_url: Application.get_env(:docker_stake_service, :url_domain) <> "poll/" <> poll_id
     } |> Poison.encode!()
 
     headers = @common_headers ++ [{"Authorization", "Bearer " <> Application.get_env(:docker_stake_service, :bitly_token)}]
@@ -17,7 +17,7 @@ defmodule DockerStakeService.BitlyClient do
       {:ok, link}
     else
       _ ->
-        {:ok, Application.get_env(:docker_stake_service, :url_domain) <> poll_id}
+        {:ok, Application.get_env(:docker_stake_service, :url_domain) <> "poll/" <> poll_id}
     end
   end
 end

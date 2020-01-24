@@ -47,6 +47,6 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :docker_stake_service, :url_domain, "http://localhost:4000/"
+config :docker_stake_service, :url_domain, "http://localhost:3042/"
 config :docker_stake_service, :enable_bitly, false
 config :docker_stake_service, :bitly_token, bitly_token
