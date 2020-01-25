@@ -8,7 +8,6 @@ jwt_secret = System.fetch_env!("JWT_SECRET")
 
 ###### POSTGRESQL DB ########
 db_url = System.fetch_env!("POSTGRESQL_URL")
-pool_size = System.get_env!("POOL_SIZE")
 
 ###### Bitly ######
 bitly_token = System.fetch_env!("BITLY_TOKEN")
@@ -28,6 +27,6 @@ config :docker_stake_service, jwt_secret: jwt_secret
 
 config :docker_stake_service, DockerStakeService.Repo,
        url: db_url,
-       pool_size: String.to_integer(pool_size)
+       pool_size: 10
 
 config :docker_stake_service, :url_domain, url_domain
