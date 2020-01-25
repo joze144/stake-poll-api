@@ -7,7 +7,6 @@ application_port = System.fetch_env!("APP_PORT")
 jwt_secret = System.fetch_env!("JWT_SECRET")
 
 ###### POSTGRESQL DB ########
-## "postgres://postgres:postgres@172.12.0.101:5432/docker_stake_service_prod"
 db_url = System.fetch_env!("POSTGRESQL_URL")
 pool_size = System.get_env!("POOL_SIZE")
 
@@ -31,5 +30,4 @@ config :docker_stake_service, DockerStakeService.Repo,
        url: db_url,
        pool_size: String.to_integer(pool_size)
 
-# "http://stakepoll.jozhe.com/"
 config :docker_stake_service, :url_domain, url_domain
