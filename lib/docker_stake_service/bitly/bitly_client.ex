@@ -9,9 +9,8 @@ defmodule DockerStakeService.BitlyClient do
       long_url: Application.get_env(:docker_stake_service, :url_domain) <> "poll/" <> poll_id
     } |> Poison.encode!()
 
-    headers = @common_headers ++ [{"Authorization", "Bearer " <> Application.get_env(:docker_stake_service, :bitly_token)}]
-
     with true <- Application.get_env(:docker_stake_service, :enable_bitly),
+         headers <- @common_headers ++ [{"Authorization", "Bearer " <> Application.get_env(:docker_stake_service, :bitly_token)}],
          {:ok, %{body: body}} <- @endpoint <> "shorten" |> HTTPoison.post(body, headers),
          %{link: link} <- body |> Poison.decode!() do
       {:ok, link}
