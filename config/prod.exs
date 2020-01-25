@@ -4,17 +4,9 @@ use Mix.Config
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
 
-config :docker_stake_service, DockerStakeService.Repo,
-       # ssl: true,
-       url: "postgres://postgres:postgres@172.12.0.101:5432/docker_stake_service_prod",
-       pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-
 # Do not print debug messages in production
 config :logger, level: :warn
 
-config :docker_stake_service, :jwt_secret, "thisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccretthisisjwtseccret"
-
-config :docker_stake_service, :url_domain, "http://stakepoll.jozhe.com/"
 config :docker_stake_service, :enable_bitly, true
 
 # ## SSL Support

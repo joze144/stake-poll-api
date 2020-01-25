@@ -24,7 +24,11 @@ services:
     environment:
     - SECRET_KEY_BASE=I6RPdPb+FXA/5FGw90x9tJ75nAM9KqdkWakmQ+QY9q4axnYOGcu5aCwvmrAP+gpu
     - APP_PORT=4000
-    - JWT_SECRET=thisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethaha
+    - JWT_SECRET=thisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethahathisisjwtsecrethaha
+    - POSTGRESQL_URL=postgres://postgres:postgres@172.12.0.101:5432/docker_stake_service_prod
+    - POOL_SIZE=10
+    - URL_DOMAIN=http://stakepoll.jozhe.com/
+    - BITLY_TOKEN=561145b1f9d962c9f58640d675c30ddd116af358
     ports:
     - 4000:4000
     networks:

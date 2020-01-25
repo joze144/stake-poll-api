@@ -1,6 +1,6 @@
 use Mix.Config
 
-bitly_token = System.fetch_env!("BITLY_TOKEN") || ""
+bitly_token = System.fetch_env("BITLY_TOKEN") || ""
 
 # Configure your database
 config :docker_stake_service, DockerStakeService.Repo,
