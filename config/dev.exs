@@ -1,6 +1,6 @@
 use Mix.Config
 
-bitly_token = System.fetch_env("BITLY_TOKEN") || ""
+bitly_token = System.fetch_env!("BITLY_TOKEN")
 
 # Configure your database
 config :docker_stake_service, DockerStakeService.Repo,
@@ -48,5 +48,5 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :docker_stake_service, :url_domain, "http://localhost:3042/"
-config :docker_stake_service, :enable_bitly, false
+config :docker_stake_service, :enable_bitly, true
 config :docker_stake_service, :bitly_token, bitly_token
