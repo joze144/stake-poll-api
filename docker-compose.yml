@@ -48,8 +48,8 @@ services:
     ports:
     - 3000:3000
     networks:
-      - stakepollnet:
-          ipv4_address: 172.12.0.103
+      stakepollnet:
+        ipv4_address: 172.12.0.103
 
 volumes:
   stake-db:
