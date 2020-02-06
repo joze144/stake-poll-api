@@ -14,5 +14,10 @@ config :docker_stake_service, DockerStakeServiceWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+config :docker_stake_service, :blockchain_service_url, "http://localhost:3000/"
+
+config :docker_stake_service,
+       blockchain_client_impl: DockerStakeService.Blockchain.BlockchainClientImpl.Mock
+
 # Print only warnings and errors during test
 config :logger, level: :warn

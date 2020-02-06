@@ -15,6 +15,12 @@ bitly_token = System.fetch_env!("BITLY_TOKEN")
 ###### URL ######
 url_domain = System.fetch_env!("URL_DOMAIN")
 
+###### BLOCKCHAIN SERVICE #######
+
+blockchain_service_url = System.fetch_env!("BLOCKCHAIN_SERVICE_URL")
+
+config :docker_stake_service, :blockchain_service_url, blockchain_service_url
+
 config :docker_stake_service, DockerStakeServiceWeb.Endpoint,
        http: [:inet6, port: 4000],
        secret_key_base: secret_key_base,
@@ -32,3 +38,6 @@ config :docker_stake_service, DockerStakeService.Repo,
 config :docker_stake_service, :url_domain, url_domain
 
 config :docker_stake_service, :enable_bitly, true
+
+config :docker_stake_service,
+       blockchain_client_impl: DockerStakeService.Blockchain.BlockchainClientImpl

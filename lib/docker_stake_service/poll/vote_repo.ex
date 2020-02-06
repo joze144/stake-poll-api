@@ -3,11 +3,11 @@ defmodule DockerStakeService.VoteRepo do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias DockerStakeService.{PollHistoryRepo, PollOptionRepo, PollRepo, Repo, UserRepo}
+  alias DockerStakeService.{PollHistoryRepo, PollOptionRepo, PollRepo, Repo, UserBalanceRepo, UserRepo}
   alias Ecto.Multi
 
-  @fields [:id, :user_id, :poll_id, :poll_option_id, :weight]
-  @required_fields [:user_id, :poll_id, :poll_option_id, :weight]
+  @fields [:id, :user_id, :poll_id, :poll_option_id]
+  @required_fields [:user_id, :poll_id, :poll_option_id]
 
   schema "vote" do
     belongs_to(
@@ -31,7 +31,6 @@ defmodule DockerStakeService.VoteRepo do
       type: Ecto.UUID,
       foreign_key: :poll_option_id
     )
-    field(:weight, :integer, null: false)
     field(:lock_version, :integer, default: 1)
     timestamps()
   end
@@ -43,13 +42,16 @@ defmodule DockerStakeService.VoteRepo do
     |> unique_constraint(:poll_user, name: :vote_poll_id_user_id_index)
   end
 
-  def get_weight_sum_for_poll_options(poll_id) do
+  def get_weight_sum_for_poll_options(poll_id, token_id) do
     from(v in __MODULE__,
+      join: ub in UserBalanceRepo,
+      on: v.user_id == ub.user_id and ub.token_id == ^token_id,
       where: v.poll_id == ^poll_id,
       group_by: v.poll_option_id,
       select: %{
         poll_option_id: v.poll_option_id,
-        vote_weight: sum(v.weight)
+        vote_weight: sum(ub.balance),
+        number_of_voters: count(v.user_id)
       }
     )
     |> Repo.all()
@@ -65,15 +67,14 @@ defmodule DockerStakeService.VoteRepo do
     |> Repo.one()
   end
 
-  # TODO: think if user is able to change his vote?
-  def insert_vote(user_id, poll_id, poll_option_id, weight) do
+  def insert_vote(user_id, poll_id, poll_option_id) do
     on_conflict_vote = [
       set: [
         poll_option_id: poll_option_id
       ]
     ]
     vote_entry =
-      changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id, weight: weight})
+      changeset(%__MODULE__{}, %{user_id: user_id, poll_id: poll_id, poll_option_id: poll_option_id})
 
     on_conflict_history = [
       set: [

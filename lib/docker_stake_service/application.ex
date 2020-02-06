@@ -6,14 +6,15 @@ defmodule DockerStakeService.Application do
   use Application
 
   def start(_type, _args) do
+    import Supervisor.Spec, warn: false
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
       DockerStakeService.Repo,
+      # Starts a worker by calling: DockerStakeService.Worker.start_link(arg)
+      worker(DockerStakeService.BlockchainServer, [[name: DockerStakeService.BlockchainServer]]),
       # Start the endpoint when the application starts
       DockerStakeServiceWeb.Endpoint
-      # Starts a worker by calling: DockerStakeService.Worker.start_link(arg)
-      # {DockerStakeService.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

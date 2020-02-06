@@ -38,6 +38,11 @@ defmodule DockerStakeService.UserRepo do
     end
   end
 
+  def get_all() do
+    __MODULE__
+    |> Repo.all()
+  end
+
   def get_by_public_address(public_address) do
     public_address = String.downcase(public_address)
     __MODULE__

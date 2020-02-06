@@ -15,7 +15,7 @@ defmodule DockerStakeService.PollRepo do
   @type token_id :: String.t()
   @type url :: String.t()
 
-  @fields [:id, :token_id, :title, :url]
+  @fields [:id, :token_id, :title, :url, :total_views]
   @required_fields [:token_id, :title, :url]
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
@@ -29,6 +29,7 @@ defmodule DockerStakeService.PollRepo do
     )
     field(:title, :string)
     field(:url, :string)
+    field(:total_views, :integer, default: 0)
     field(:lock_version, :integer, default: 1)
     timestamps()
 
@@ -122,4 +123,11 @@ defmodule DockerStakeService.PollRepo do
   end
 
   def preload_poll_options(nil), do: nil
+
+  def increment_number_of_views_on_poll(poll_id) do
+    {:ok, binary_poll_id} = Ecto.UUID.dump(poll_id)
+    Ecto.Adapters.SQL.query!(
+      Repo, "UPDATE poll SET total_views = total_views + 1 WHERE id = $1", [binary_poll_id]
+    )
+  end
 end

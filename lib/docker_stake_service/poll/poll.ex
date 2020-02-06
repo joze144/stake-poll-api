@@ -31,7 +31,7 @@ defmodule DockerStakeService.Poll do
 
   @spec vote_on_poll(user_id, poll_id, option_id) :: {:ok, Map.t()} | {:error, nil}
   def vote_on_poll(user_id, poll_id, option_id) do
-    with {:ok, _} <- VoteRepo.insert_vote(user_id, poll_id, option_id, 1) do
+    with {:ok, _} <- VoteRepo.insert_vote(user_id, poll_id, option_id) do
       {:ok, get_poll(poll_id, user_id)}
     else
       e ->
@@ -61,9 +61,10 @@ defmodule DockerStakeService.Poll do
 
   defp calculate_votes(nil), do: nil
 
-  defp calculate_votes(%{poll_id: poll_id, poll_options: poll_options} = poll) do
-    votes = VoteRepo.get_weight_sum_for_poll_options(poll_id)
+  defp calculate_votes(%{poll_id: poll_id, poll_options: poll_options, token_id: token_id} = poll) do
+    votes = VoteRepo.get_weight_sum_for_poll_options(poll_id, token_id)
     votes_sum = sum_votes(votes)
+    voters_sum = sum_voters(votes)
 
     full_votes =
       votes
@@ -72,6 +73,13 @@ defmodule DockerStakeService.Poll do
           Map.merge(data, %{vote_percentage: "0.0"})
         else
           Map.merge(data, %{vote_percentage: :erlang.float_to_binary((weight * 100) / votes_sum, [decimals: 1])})
+        end
+      end)
+      |> Enum.map(fn %{number_of_voters: voters} = data ->
+        if voters == 0 do
+          Map.merge(data, %{voters_percentage: "0.0"})
+        else
+          Map.merge(data, %{voters_percentage: :erlang.float_to_binary((voters * 100) / voters_sum, [decimals: 1])})
         end
       end)
 
@@ -83,7 +91,7 @@ defmodule DockerStakeService.Poll do
             Map.merge(option, v)
 
           nil ->
-            Map.merge(option, %{vote_percentage: "0", vote_weight: 0})
+            Map.merge(option, %{vote_percentage: "0", vote_weight: 0, voters_percentage: "0", number_of_voters: 0})
         end
       end)
 
@@ -98,4 +106,13 @@ defmodule DockerStakeService.Poll do
   end
 
   defp sum_votes(_), do: 0
+
+  defp sum_voters(votes) when is_list(votes) and votes != [] do
+    votes
+    |> Enum.reduce(0, fn %{number_of_voters: voters}, acc ->
+      acc + voters
+    end)
+  end
+
+  defp sum_voters(_), do: 0
 end

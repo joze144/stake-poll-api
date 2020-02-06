@@ -17,6 +17,9 @@ services:
         ipv4_address: 172.12.0.101
   stakeapp:
     container_name: stakeapp
+    depends_on:
+      - postgrescont
+      - blockchainservice
     restart: always
     build:
       context: .
@@ -29,11 +32,24 @@ services:
     - POOL_SIZE=10
     - URL_DOMAIN=http://stakepoll.jozhe.com/
     - BITLY_TOKEN=561145b1f9d962c9f58640d675c30ddd116af358
+    - BLOCKCHAIN_SERVICE_URL=http://172.12.0.103:3000/
     ports:
     - 4000:4000
     networks:
       stakepollnet:
         ipv4_address: 172.12.0.102
+  blockchainservice:
+    container_name: blockchainservice
+    restart: always
+    build:
+      context: ../stake-poll-crypto
+    environment:
+    - WEB3_PROVIDER=https://mainnet.infura.io/v3/e44dd26806914fa78d9601b6c7c215ed
+    ports:
+    - 3000:3000
+    networks:
+      - stakepollnet:
+          ipv4_address: 172.12.0.103
 
 volumes:
   stake-db:

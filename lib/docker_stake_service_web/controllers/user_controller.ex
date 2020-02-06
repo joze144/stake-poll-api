@@ -2,6 +2,10 @@ defmodule DockerStakeServiceWeb.UserController do
   use DockerStakeServiceWeb, :controller
 
   alias DockerStakeService.Account
+  alias DockerStakeService.Blockchain.BlockchainClient
+  alias DockerStakeService.BlockchainServer
+
+  @eth_token_id "8bb6fd41-dc57-405f-87da-e372bc511efe"
 
   def sign_up_address(conn, %{"public_address" => public_address}) do
     with {:ok, user} <- Account.register(public_address) do
@@ -12,8 +16,10 @@ defmodule DockerStakeServiceWeb.UserController do
     end
   end
 
-  def verify_signature(conn, %{"public_address" => public_address, "message" => _message, "signature" => _signature}) do
-    with {:ok, user} <- Account.register(public_address) do
+  def verify_signature(conn, %{"public_address" => public_address, "message" => message, "signature" => signature}) do
+    with {:ok, true} <- BlockchainClient.verify_signature(public_address, signature, message),
+         {:ok, %{id: user_id} = user} <- Account.register(public_address) do
+      BlockchainServer.update_account_balance(user_id, public_address, @eth_token_id)
       jwt = Account.generate_jwt(user)
       conn |> put_status(:ok) |> render("user_with_jwt.json", user: user, jwt: jwt)
     end

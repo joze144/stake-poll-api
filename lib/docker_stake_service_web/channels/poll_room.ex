@@ -10,6 +10,7 @@ defmodule DockerStakeServiceWeb.PollRoom do
   def join("poll:" <> poll_id, _, socket) do
     with {:ok, _} <- UUID.info(poll_id),
          %PollRepo{} <- PollRepo.get_by_id(poll_id) do
+      PollRepo.increment_number_of_views_on_poll(poll_id)
       {:ok, socket}
     else
       _ ->
