@@ -1,16 +1,59 @@
 defmodule DockerStakeService.Blockchain.BlockchainClient do
   @moduledoc false
 
-  @type public_address :: String.t()
-  @type signature :: String.t()
-  @type message :: String.t()
-  @type token_address :: String.t()
+  require Logger
 
-  @callback verify_signature(public_address, signature, message) :: {:ok, String.t()}
-  @callback get_address_balance(public_address, token_address) :: {:ok, String.t()}
+  def verify_signature(public_address, signature, message) do
+    body =
+      %{public_address: public_address, signature: signature, message: message}
+      |> Poison.encode!()
 
-  @implementation Application.get_env(:docker_stake_service, :blockchain_client_impl)
+    get_service_base_url() <> "verify/signature"
+    |> HTTPoison.post(body, get_headers())
+    |> case do
+         {:ok, %{status_code: 200, body: body}} ->
+           with %{"valid" => valid} <- body |> Poison.decode!() do
+             {:ok, valid}
+           else
+             e ->
+               Logger.error("Failed to validate: #{inspect(e)}")
+               {:error, :failed}
+           end
 
-  defdelegate verify_signature(public_address, signature, message), to: @implementation
-  defdelegate get_address_balance(public_address, token_address), to: @implementation
+         e ->
+           Logger.error("Failed to validate: #{inspect(e)}")
+           {:error, :failed}
+       end
+  end
+
+  def get_address_balance(public_address, token_address) do
+    body =
+      %{public_address: public_address, token_address: token_address}
+      |> Poison.encode!()
+
+    get_service_base_url() <> "account/balance"
+    |> HTTPoison.post(body, get_headers())
+    |> case do
+         {:ok, %{status_code: 200, body: body}} ->
+           with %{"address" => address, "balance" => balance} <- body |> Poison.decode!() do
+             {:ok, %{public_address: String.downcase(address), balance: balance}}
+           else
+             e ->
+               Logger.error("Failed to get address balance: #{inspect(e)}")
+               {:error, :failed}
+           end
+
+         e ->
+           Logger.error("Failed to get address balance: #{inspect(e)}")
+           {:error, :failed}
+       end
+  end
+
+  defp get_service_base_url() do
+    Application.get_env(:docker_stake_service, :blockchain_service_url)
+  end
+
+  defp get_headers() do
+    [{"Content-type", "application/json"}]
+  end
 end

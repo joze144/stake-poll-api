@@ -51,5 +51,3 @@ config :docker_stake_service, :url_domain, "http://localhost:3042/"
 config :docker_stake_service, :blockchain_service_url, "http://localhost:3000/"
 config :docker_stake_service, :enable_bitly, false
 config :docker_stake_service, :bitly_token, bitly_token
-config :docker_stake_service,
-       blockchain_client_impl: DockerStakeService.Blockchain.BlockchainClientImpl

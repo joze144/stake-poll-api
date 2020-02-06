@@ -38,6 +38,3 @@ config :docker_stake_service, DockerStakeService.Repo,
 config :docker_stake_service, :url_domain, url_domain
 
 config :docker_stake_service, :enable_bitly, true
-
-config :docker_stake_service,
-       blockchain_client_impl: DockerStakeService.Blockchain.BlockchainClientImpl
