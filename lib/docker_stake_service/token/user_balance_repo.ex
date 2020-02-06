@@ -4,6 +4,7 @@ defmodule DockerStakeService.UserBalanceRepo do
   use DockerStakeService.Schema
   import Ecto.Changeset
 
+  alias DockerStakeService.{TokenRepo, UserRepo}
   alias DockerStakeService.Repo
 
   @fields [:id, :user_id, :token_id, :balance]

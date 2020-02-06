@@ -63,8 +63,6 @@ defmodule DockerStakeServiceWeb.PollController do
 
   def get_user_public_address(_), do: nil
 
-  def get_user_id(_), do: nil
-
   defp validate_option(%{"content" => c, "id" => id}) do
     c = String.trim(c)
     with {:ok, _} <- UUID.info(id),
