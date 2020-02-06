@@ -95,7 +95,10 @@ defmodule DockerStakeService.Poll do
         end
       end)
 
-    Map.put(poll, :poll_options, full_poll_options)
+    poll
+    |> Map.put(:poll_options, full_poll_options)
+    |> Map.put(:number_of_voters, voters_sum)
+    |> Map.put(:amount_of_token, votes_sum)
   end
 
   defp sum_votes(votes) when is_list(votes) and votes != [] do

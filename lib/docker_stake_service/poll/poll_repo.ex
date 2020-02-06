@@ -69,6 +69,7 @@ defmodule DockerStakeService.PollRepo do
         token_id: t.id,
         ticker: t.ticker,
         token_name: t.name,
+        total_views: p.total_views,
         timestamp: p.inserted_at
       }
     )
