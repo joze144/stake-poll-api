@@ -3,6 +3,7 @@ defmodule DockerStakeService.UserBalanceRepo do
 
   use DockerStakeService.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias DockerStakeService.{TokenRepo, UserRepo}
   alias DockerStakeService.Repo
@@ -36,6 +37,13 @@ defmodule DockerStakeService.UserBalanceRepo do
     |> cast(params, @fields)
     |> validate_required(@required_fields)
     |> unique_constraint(:ticker, name: :token_ticker_index)
+  end
+
+  def get_user_balances(user_id) do
+    __MODULE__
+    |> where([ub], ub.user_id == ^user_id)
+    |> select([ub], %{token_id: ub.token_id, balance: ub.balance})
+    |> Repo.all()
   end
 
   def update_user_balance_for_token(user_id, token_id, balance) do

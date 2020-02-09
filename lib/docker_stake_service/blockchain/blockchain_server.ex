@@ -5,6 +5,7 @@ defmodule DockerStakeService.BlockchainServer do
 
   alias DockerStakeService.Blockchain.BlockchainClient
   alias DockerStakeService.UserBalanceRepo
+  alias DockerStakeServiceWeb.UserRoom
 
   require Logger
 
@@ -27,6 +28,7 @@ defmodule DockerStakeService.BlockchainServer do
   def handle_cast({:update_account_balance, user_id, public_address, token_id}, state) do
     with {:ok, %{balance: balance}} <- BlockchainClient.get_address_balance(public_address, "token_address") do
       UserBalanceRepo.update_user_balance_for_token(user_id, token_id, balance)
+      UserRoom.push_user_balances_update(user_id)
     end
     {:noreply, state}
   end

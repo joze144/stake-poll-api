@@ -7,9 +7,10 @@ defmodule DockerStakeServiceWeb.UserView do
     |> Map.take([:id, :public_address])
   end
 
-  def render("user_with_jwt.json", %{user: user, jwt: jwt}) do
+  def render("user_with_jwt.json", %{user: user, jwt: jwt,  balances: balances}) do
     "show.json"
     |> render(%{user: user})
     |> Map.merge(%{jwt_token: "Bearer " <> jwt})
+    |> Map.merge(%{balances: balances})
   end
 end

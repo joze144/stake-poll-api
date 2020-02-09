@@ -16,5 +16,7 @@ config :docker_stake_service, DockerStakeServiceWeb.Endpoint,
 
 config :docker_stake_service, :blockchain_service_url, "http://localhost:3000/"
 
+config :docker_stake_service, :blockchain_service_enabled, false
+
 # Print only warnings and errors during test
 config :logger, level: :warn
