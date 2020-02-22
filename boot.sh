@@ -4,5 +4,5 @@
 
 set -eux
 
-./prod/rel/docker_stake_service/bin/docker_stake_service eval 'Elixir.DockerStakeService.ReleaseTasks.seed()'
-./prod/rel/docker_stake_service/bin/docker_stake_service start
+/app/bin/docker_stake_service eval 'Elixir.DockerStakeService.ReleaseTasks.seed()'
+/app/bin/docker_stake_service start
